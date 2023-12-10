@@ -20,8 +20,9 @@ const userLogin = async (req, res) => {
                     id: userMatch._id,
                     name: userMatch.name,
                     email: email,
+                    phNumer: userMatch.phNumer
                 }, process.env.SECRET_KEY, { expiresIn: "15m" });
-                res.json({ message: "Successfull login!", status: true, user: token });
+                res.json({ message: "Successfull login!", status: true, user: token, userDetails: userMatch });
             }
         }
     }

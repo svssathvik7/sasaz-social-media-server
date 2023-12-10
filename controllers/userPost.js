@@ -1,5 +1,7 @@
 const userModel = require("../models/userModel");
 const postModel = require("../models/postModel");
+const jwt = require("jsonwebtoken");
+const { now } = require("mongoose");
 
 
 async function userPost(req, res) {
@@ -14,7 +16,6 @@ async function userPost(req, res) {
                 caption: caption,
                 likes: 0,
                 comments: [],
-                postTime: Date.now
             })
             newPost.save();
             await userModel.updateOne({ email: email }, { $push: { posts: newPost } });
@@ -28,3 +29,11 @@ async function userPost(req, res) {
         res.json({ message: "There is some issue! Please Try Again...", status: false });
     }
 }
+
+async function getUserDetails(req, res) {
+    const { token } = req.body;
+    const decodedToken = jwt.decode(token, process.env.SECRET_KEY);
+    res.json({ message: "User Details Fetched", userDetails: decodedToken });
+}
+
+module.exports = { userPost, getUserDetails };

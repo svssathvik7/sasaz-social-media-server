@@ -12,7 +12,7 @@ const postSchema = new mongoose.Schema({
     },
     caption: {
         type: String,
-        required
+        required: true
     },
     postTime: {
         type: Date,
@@ -21,14 +21,14 @@ const postSchema = new mongoose.Schema({
     likes: {
         type: Number,
         default: 0,
-        required
+        required: true
     },
     comments: {
         type: [String],
         default: [],
-        required
+        required: true
     }
 });
 
 const postModel = new mongoose.model('posts', postSchema);
-export default postModel;
+module.exports = postModel;
