@@ -20,7 +20,15 @@ const userSchema = new mongoose.Schema({
     phNumber: {
         type: String,
         required: true
-    }
+    },
+    friends: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'users'
+    }],
+    posts: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'posts'
+    }]
 });
-const userDb = new mongoose.model("users", userSchema);
-module.exports = userDb;
+const userModel = new mongoose.model("users", userSchema);
+module.exports = userModel;
