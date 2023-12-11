@@ -32,7 +32,7 @@ async function userPost(req, res) {
 
 async function getUserDetails(req, res) {
     const { token } = req.body;
-    const decodedToken = jwt.decode(token, process.env.SECRET_KEY);
+    const decodedToken = jwt.decode(token,"ThisIsSaSazSecret");
     res.json({ message: "User Details Fetched", userDetails: decodedToken });
 }
 
