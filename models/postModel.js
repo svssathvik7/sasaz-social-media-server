@@ -7,6 +7,10 @@ const postSchema = new mongoose.Schema({
     imageUrl: {
         type: String
     },
+    category: {
+        type: String,
+        required: true
+    },
     postText: {
         type: String
     },
