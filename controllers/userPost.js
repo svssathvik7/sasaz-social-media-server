@@ -5,13 +5,14 @@ const { now } = require("mongoose");
 
 
 async function userPost(req, res) {
-    const { imageUrl, postText, email, caption, category } = req.body;
+    const { imageurl, postText, email, caption, category } = req.body;
+    console.log(req.body);
     try {
         const user = await userModel.findOne({ email: email });
         if (user) {
             const newPost = new postModel({
                 userPosted: user,
-                imageUrl: imageUrl,
+                imageUrl: imageurl,
                 postText: postText,
                 caption: caption,
                 category: category,
@@ -34,7 +35,8 @@ async function userPost(req, res) {
 async function getUserDetails(req, res) {
     const { token } = req.body;
     const decodedToken = jwt.decode(token, "ThisIsSaSazSecret");
-    res.json({ message: "User Details Fetched", userDetails: decodedToken });
+    const userDetails = await userModel.findOne({ email: decodedToken.email }).populate("posts");
+    res.json({ message: "User Details Fetched", userDetails: userDetails });
 }
 
 module.exports = { userPost, getUserDetails };
