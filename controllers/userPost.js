@@ -1,7 +1,6 @@
 const userModel = require("../models/userModel");
 const postModel = require("../models/postModel");
 const jwt = require("jsonwebtoken");
-const { now } = require("mongoose");
 
 
 async function userPost(req, res) {
@@ -32,8 +31,23 @@ async function userPost(req, res) {
 
 async function getUserDetails(req, res) {
     const { token } = req.body;
-    const decodedToken = jwt.decode(token, process.env.SECRET_KEY);
+    const decodedToken = jwt.decode(token, "Azeemshaikpasha");
     res.json({ message: "User Details Fetched", userDetails: decodedToken });
 }
 
-module.exports = { userPost, getUserDetails };
+async function getUserPosts(req,res){
+    const {email} = req.body;
+    try{
+        const userMatch = await userModel.findOne({email:email}).populate("posts");
+        if(userMatch){
+            res.json({message:"Success",posts:userMatch.posts});
+        }
+        else{
+            res.json({message:"User not found",posts:false});
+        }
+    }
+    catch(error){
+        res.json({message:"Failed to retreive posts!",posts:false});
+    }
+}
+module.exports = { userPost, getUserDetails, getUserPosts };
