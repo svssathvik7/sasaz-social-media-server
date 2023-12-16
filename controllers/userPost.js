@@ -33,29 +33,25 @@ async function userPost(req, res) {
 
 async function getUserDetails(req, res) {
     const { token } = req.body;
-<<<<<<< HEAD
     const decodedToken = jwt.decode(token, "ThisIsSaSazSecret");
     const userDetails = await userModel.findOne({ email: decodedToken.email }).populate("posts");
     res.json({ message: "User Details Fetched", userDetails: userDetails });
-=======
-    const decodedToken = jwt.decode(token, "Azeemshaikpasha");
-    res.json({ message: "User Details Fetched", userDetails: decodedToken });
->>>>>>> 5e36a60b4f46c48e1f62413a0111a81b6bb91c56
 }
 
-async function getUserPosts(req,res){
-    const {email} = req.body;
-    try{
-        const userMatch = await userModel.findOne({email:email}).populate("posts");
-        if(userMatch){
-            res.json({message:"Success",posts:userMatch.posts});
+async function getUserPosts(req, res) {
+    const { email } = req.body;
+    try {
+        const userMatch = await userModel.findOne({ email: email }).populate("posts");
+        console.log(userMatch);
+        if (userMatch) {
+            res.json({ message: "Success", posts: userMatch.posts });
         }
-        else{
-            res.json({message:"User not found",posts:false});
+        else {
+            res.json({ message: "User not found", posts: false });
         }
     }
-    catch(error){
-        res.json({message:"Failed to retreive posts!",posts:false});
+    catch (error) {
+        res.json({ message: "Failed to retreive posts!", posts: false });
     }
 }
 module.exports = { userPost, getUserDetails, getUserPosts };
