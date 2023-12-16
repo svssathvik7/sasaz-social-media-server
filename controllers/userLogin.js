@@ -20,8 +20,14 @@ const userLogin = async (req, res) => {
                     id: userMatch._id,
                     name: userMatch.name,
                     email: email,
+<<<<<<< HEAD
                     phNumer: userMatch.phNumer
                 }, "ThisIsSaSazSecret", { expiresIn: "15m" });
+=======
+                    phNumer: userMatch.phNumer,
+                    dp : userMatch.dp
+                }, "Azeemshaikpasha", { expiresIn: "15m" });
+>>>>>>> 5e36a60b4f46c48e1f62413a0111a81b6bb91c56
                 res.json({ message: "Successfull login!", status: true, user: token, userDetails: userMatch });
             }
         }

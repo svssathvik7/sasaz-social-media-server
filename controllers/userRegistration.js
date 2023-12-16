@@ -5,7 +5,6 @@ const userRegistration = async (req, res) => {
     console.log(name, email, password, phNumber);
     try {
         const match = await userModel.findOne({ email: email });
-        console.log(match);
         if (match) {
             res.json({ message: "User Already Registered, Please Log In!", status: true });
         }
