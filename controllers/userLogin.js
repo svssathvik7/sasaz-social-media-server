@@ -10,7 +10,6 @@ const userLogin = async (req, res) => {
             res.json({ message: "User not Registered, Please Register!", status: true });
         }
         else {
-            // console.log(userMatch);
             const resultMatch = bcrypt.compare(password, userMatch.password);
             if (!resultMatch) {
                 res.json({ message: "Wrong password!", status: false });

@@ -5,7 +5,6 @@ const jwt = require("jsonwebtoken");
 
 async function userPost(req, res) {
     const { imageurl, postText, email, caption, category } = req.body;
-    console.log(req.body);
     try {
         const user = await userModel.findOne({ email: email });
         if (user) {
@@ -42,7 +41,6 @@ async function getUserPosts(req, res) {
     const { email } = req.body;
     try {
         const userMatch = await userModel.findOne({ email: email }).populate("posts");
-        console.log(userMatch);
         if (userMatch) {
             res.json({ message: "Success", posts: userMatch.posts });
         }

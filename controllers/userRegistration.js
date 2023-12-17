@@ -2,7 +2,6 @@ const bcrypt = require("bcrypt");
 const userModel = require("../models/userModel");
 const userRegistration = async (req, res) => {
     const { name, email, password, phNumber } = req.body.backendData;
-    console.log(name, email, password, phNumber);
     try {
         const match = await userModel.findOne({ email: email });
         if (match) {
