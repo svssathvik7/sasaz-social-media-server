@@ -19,9 +19,8 @@ const userLogin = async (req, res) => {
                     id: userMatch._id,
                     name: userMatch.name,
                     email: email,
-                    phNumer: userMatch.phNumer,
-                    dp : userMatch.dp
-                }, "Azeemshaikpasha", { expiresIn: "15m" });
+                    phNumer: userMatch.phNumer
+                }, "ThisIsSaSazSecret", { expiresIn: "15m" });
                 res.json({ message: "Successfull login!", status: true, user: token, userDetails: userMatch });
             }
         }
@@ -39,7 +38,7 @@ async function authorize(req, res) {
         }
         else {
             const token = authHeader.split(" ")[1];
-            const decodedToken = jwt.decode(token, process.env.SECRET);
+            const decodedToken = jwt.decode(token, "ThisIsSaSazSecret");
             if (decodedToken) {
                 const expiryTimestamp = decodedToken.exp;
                 const currentTimestamp = Math.floor(Date.now() / 1000);
