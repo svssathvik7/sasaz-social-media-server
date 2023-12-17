@@ -27,11 +27,16 @@ const postSchema = new mongoose.Schema({
         default: 0,
         required: true
     },
-    comments: {
-        type: [String],
-        default: [],
-        required: true
-    }
+    comments: [
+        {
+            comment: {
+                type: String
+            },
+            userCommented: {
+                type: String
+            }
+        }
+    ]
 });
 
 const postModel = new mongoose.model('posts', postSchema);

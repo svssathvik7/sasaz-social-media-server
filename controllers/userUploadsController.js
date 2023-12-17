@@ -30,6 +30,19 @@ async function userPost(req, res) {
     }
 }
 
+async function userComment(req, res) {
+    try {
+        const { pId, comment, name } = req.body;
+        console.log(name);
+        await postModel.updateOne({ _id: pId }, { $push: { comments: { comment: comment, userCommented: name } } });
+        res.json({ message: "Commented on the post", status: true });
+    }
+    catch (err) {
+        console.log(err.message);
+        res.json({ message: "There is some issue! Please Try Again...", status: false });
+    }
+}
+
 async function getUserDetails(req, res) {
     const { token } = req.body;
     const decodedToken = jwt.decode(token, "ThisIsSaSazSecret");
@@ -52,4 +65,4 @@ async function getUserPosts(req, res) {
         res.json({ message: "Failed to retreive posts!", posts: false });
     }
 }
-module.exports = { userPost, getUserDetails, getUserPosts };
+module.exports = { userPost, getUserDetails, getUserPosts, userComment };
