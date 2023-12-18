@@ -43,6 +43,21 @@ async function userComment(req, res) {
     }
 }
 
+async function userLike(req, res) {
+    try {
+        const { alter, pId } = req.body;
+        if (alter === false) {
+            await postModel.updateOne({ _id: pId }, { $inc: { likes: -1 } });
+        }
+        else {
+            await postModel.updateOne({ _id: pId }, { $inc: { likes: 1 } });
+        }
+    }
+    catch (err) {
+        console.log(err.message);
+        res.json({ message: "There is some issue! Please Try Again...", status: false });
+    }
+}
 async function getUserDetails(req, res) {
     const { token } = req.body;
     const decodedToken = jwt.decode(token, "ThisIsSaSazSecret");
@@ -65,4 +80,6 @@ async function getUserPosts(req, res) {
         res.json({ message: "Failed to retreive posts!", posts: false });
     }
 }
-module.exports = { userPost, getUserDetails, getUserPosts, userComment };
+module.exports = {
+    userPost, getUserDetails, getUserPosts, userComment, userLike
+};
