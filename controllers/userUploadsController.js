@@ -58,6 +58,15 @@ async function userLike(req, res) {
         res.json({ message: "There is some issue! Please Try Again...", status: false });
     }
 }
+async function getAllUserDetails(req, res) {
+    try {
+        const users = await userModel.find({});
+        res.json({ message: "Successfully fecthed all the users.", status: true, users: users });
+    } catch (error) {
+        console.log(error);
+        res.json({ message: "There is some issue! Please Try Again...", status: false });
+    }
+}
 async function getUserDetails(req, res) {
     const { token } = req.body;
     const decodedToken = jwt.decode(token, "ThisIsSaSazSecret");
@@ -81,5 +90,5 @@ async function getUserPosts(req, res) {
     }
 }
 module.exports = {
-    userPost, getUserDetails, getUserPosts, userComment, userLike
+    userPost, getUserDetails, getUserPosts, userComment, userLike, getAllUserDetails
 };
