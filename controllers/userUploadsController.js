@@ -89,6 +89,11 @@ async function getUserPosts(req, res) {
         res.json({ message: "Failed to retreive posts!", posts: false });
     }
 }
+
+async function getAllUserPosts(req,res){
+    const data = await postModel.find({});
+    res.json({message:"Sent all posts",posts:data});
+}
 module.exports = {
-    userPost, getUserDetails, getUserPosts, userComment, userLike, getAllUserDetails
+    userPost, getUserDetails, getUserPosts, userComment, userLike, getAllUserDetails,getAllUserPosts
 };
