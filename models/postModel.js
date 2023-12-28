@@ -4,6 +4,9 @@ const postSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'users'
     },
+    userName: {
+        type: String,
+    },
     imageUrl: {
         type: String
     },

@@ -35,7 +35,7 @@ async function userComment(req, res) {
         const { pId, comment, name } = req.body;
         console.log(name);
         await postModel.updateOne({ _id: pId }, { $push: { comments: { comment: comment, userCommented: name } } });
-        res.json({ message: "Commented on the post", status: true });
+        res.json({ message: "Commented on the post", status: true, userName: name });
     }
     catch (err) {
         console.log(err.message);

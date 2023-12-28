@@ -10,6 +10,7 @@ async function userPost(req, res) {
         if (user) {
             const newPost = new postModel({
                 userPosted: user,
+                userName: user.name,
                 imageUrl: imageUrl,
                 postText: postText,
                 caption: caption,
@@ -35,20 +36,19 @@ async function getUserDetails(req, res) {
     res.json({ message: "User Details Fetched", userDetails: decodedToken });
 }
 
-async function getUserPosts(req,res){
+async function getUserPosts(req, res) {
     const email = req.body.email;
-    try{
-        const userMatch = await userModel.findOne({email:email}).populate("posts");
-        console.log(userMatch);
-        if(userMatch){
-            res.json({message:"Success",posts:userMatch.posts});
+    try {
+        const userMatch = await userModel.findOne({ email: email }).populate("posts");
+        if (userMatch) {
+            res.json({ message: "Success", posts: userMatch.posts });
         }
-        else{
-            res.json({message:"User not found",posts:false});
+        else {
+            res.json({ message: "User not found", posts: false });
         }
     }
-    catch(error){
-        res.json({message:"Failed to retreive posts!",posts:false});
+    catch (error) {
+        res.json({ message: "Failed to retreive posts!", posts: false });
     }
 }
 module.exports = { userPost, getUserDetails, getUserPosts };
