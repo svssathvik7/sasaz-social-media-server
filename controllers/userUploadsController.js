@@ -15,6 +15,7 @@ async function userPost(req, res) {
                 caption: caption,
                 category: category,
                 likes: 0,
+                usersLiked: [],
                 comments: [],
             })
             newPost.save();
@@ -45,12 +46,17 @@ async function userComment(req, res) {
 
 async function userLike(req, res) {
     try {
-        const { alter, pId } = req.body;
-        if (alter === false) {
-            await postModel.updateOne({ _id: pId }, { $inc: { likes: -1 } });
+        const { pId, email } = req.body;
+        const post = await postModel.findOne({ _id: pId, 'usersLiked': email });
+        const filter = { _id: pId };
+        const update = !post ? { $inc: { likes: 1 }, $push: { usersLiked: email } } : { $inc: { likes: -1 }, $pull: { usersLiked: email } };
+        const options = { new: true };
+        const updatedPost = await postModel.findOneAndUpdate(filter, update, options);
+        if (!post) {
+            res.json({ message: "Liked the Post", status: true, likes: updatedPost.likes });
         }
         else {
-            await postModel.updateOne({ _id: pId }, { $inc: { likes: 1 } });
+            res.json({ message: "Already Liked the Post", status: false, likes: updatedPost.likes });
         }
     }
     catch (err) {
