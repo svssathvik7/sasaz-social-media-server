@@ -30,7 +30,6 @@ async function userPost(req, res) {
         res.json({ message: "There is some issue! Please Try Again...", status: false });
     }
 }
-
 async function userComment(req, res) {
     try {
         const { pId, comment, name } = req.body;
@@ -95,6 +94,74 @@ async function getUserPosts(req, res) {
         res.json({ message: "Failed to retreive posts!", posts: false });
     }
 }
+async function getAllUserPosts(req,res){
+    const data = await postModel.find({});
+    res.json({message:"Sent all posts",posts:data});
+}
+async function manageUserFrnds(req,res){
+    const {pId, email, frndEmail} = req.body;
+    if(frndEmail){
+        try {
+            const user = await userModel.findOne({ email: frndEmail });
+            if (user) {
+                await userModel.updateOne({ email }, { $addToSet: { friends: user } });
+                console.log(email);
+                res.json({ message: "Friend Added", status: true });
+            } else {
+                res.json({ message: "Friend Not Found", status: false });
+            }
+        } catch (err) {
+            res.json({ message: "There is some issue! Please Try Again...", status: false });
+        }
+    }
+    else if (pId){
+        try {
+            const user = await userModel.findOne({ email });
+            if (user) {
+                const friendIndex = user.friends.indexOf(pId);
+                if (friendIndex !== -1) {
+                    user.friends.splice(friendIndex, 1);
+                    await user.save();
+                    const friendsWithDetails = await Promise.all(
+                        user.friends.map(async (friendId) => {
+                            const friend = await userModel.findById(friendId);
+                            return { id: friendId, ...friend.toObject() };
+                        })
+                    );
+                    res.json({ friends: friendsWithDetails, status: true });
+                } else {
+                    res.json({ message: "Friend Not Found in the User's Friends List", status: false });
+                }
+            } else {
+                res.json({ message: "User Not Found", status: false });
+            }
+        } catch (err) {
+            res.json({ message: "There is some issue! Please Try Again...", status: false });
+        }
+    }
+    else{
+        const { email } = req.body;
+
+    try {
+        const user = await userModel.findOne({ email });
+
+        if (user) {
+            const friendsWithDetails = await Promise.all(
+                user.friends.map(async (friendId) => {
+                    const friend = await userModel.findById(friendId);
+                    return { id: friendId, ...friend.toObject() };
+                })
+            );
+    
+            res.json({ friends: friendsWithDetails, status: true });
+        } else {
+            res.json({ message: "User Not Found", status: false });
+        }
+    } catch (err) {
+        res.json({ message: "There is some issue! Please Try Again...", status: false });
+    }
+    }
+}
 module.exports = {
-    userPost, getUserDetails, getUserPosts, userComment, userLike, getAllUserDetails
+    userPost, getUserDetails, getUserPosts, userComment, userLike,getAllUserDetails,getAllUserPosts,manageUserFrnds
 };
