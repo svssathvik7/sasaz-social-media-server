@@ -101,7 +101,7 @@ async function getAllUserPosts(req, res) {
 
 async function manageUserFrnds(req, res) {
     try {
-        const { fId, email, frndEmail } = req.body;
+        const { fId, email } = req.body;
         const frndUser = await userModel.findOne({ email: email, 'friends': fId });
         if (frndUser) {
             //Remove Friend     
