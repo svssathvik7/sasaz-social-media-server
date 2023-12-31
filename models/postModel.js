@@ -4,6 +4,9 @@ const postSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'users'
     },
+    userName: {
+        type: String,
+    },
     imageUrl: {
         type: String
     },
@@ -24,9 +27,9 @@ const postSchema = new mongoose.Schema({
     },
     likes: {
         type: Number,
-        default: 0,
-        required: true
+        default: 0
     },
+    usersLiked: [String],
     comments: [
         {
             comment: {
