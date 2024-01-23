@@ -10,7 +10,14 @@ async function getUserDetails(req, res) {
 async function getUserPosts(req, res) {
     const email = req.body.email;
     try {
-        const userMatch = await userModel.findOne({ email: email }).populate("posts");
+        const userMatch = await userModel.findOne({ email: email }).populate(
+            {
+                path : "posts",
+                populate : {
+                    path : "userPosted"
+                }
+            }
+        );
         if (userMatch) {
             res.json({ message: "Success", posts: userMatch.posts });
         }

@@ -10,18 +10,26 @@ const userLogin = async (req, res) => {
             res.json({ message: "User not Registered, Please Register!", status: true });
         }
         else {
-            const resultMatch = bcrypt.compare(password, userMatch.password);
+            const resultMatch = await bcrypt.compare(password, userMatch.password);
             if (!resultMatch) {
                 res.json({ message: "Wrong password!", status: false });
             }
             else {
+                const userData = await userModel.findOne({email:email}).populate(
+                    {
+                        path : "posts",
+                        populate : {
+                            path : "userPosted"
+                        }
+                    }
+                )
                 const token = jwt.sign({
                     id: userMatch._id,
                     name: userMatch.name,
                     email: email,
                     phNumer: userMatch.phNumer
                 }, "ThisIsSaSazSecret", { expiresIn: "15m" });
-                res.json({ message: "Successfull login!", status: true, user: token, userDetails: userMatch });
+                res.json({ message: "Successfull login!", status: true, user: token, userDetails: userData });
             }
         }
     }
