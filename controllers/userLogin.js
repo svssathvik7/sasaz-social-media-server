@@ -15,14 +15,16 @@ const userLogin = async (req, res) => {
                 res.json({ message: "Wrong password!", status: false });
             }
             else {
-                const userData = await userModel.findOne({email:email}).populate(
-                    {
-                        path : "posts",
-                        populate : {
-                            path : "userPosted"
-                        }
+                const userData = await userModel
+                .findOne({ email: email })
+                .populate('posts')
+                .populate({
+                    path: 'posts',
+                    populate: {
+                        path: 'userPosted',
                     }
-                )
+                });                
+                console.log(userData);
                 const token = jwt.sign({
                     id: userMatch._id,
                     name: userMatch.name,
