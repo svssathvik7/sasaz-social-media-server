@@ -119,6 +119,25 @@ async function manageUserFrnds(req, res) {
         console.log(err);
     }
 }
+const deletePost = async (req,res)=>{
+    try {
+        const {postId} = req.body;
+        const postMatch = await postModel.findOne({_id:postId});
+        if(postMatch){
+            const userPosted = await userModel.findOne({_id:postMatch.userPosted});
+            await postModel.deleteOne({_id:postMatch._id});
+            await userPosted.posts.pull(postMatch);
+            await userPosted.save();
+            res.json({message:"Success",status:true})
+        }
+        else{
+            res.json({message:"Error deleting the post!",status:false});
+        }
+    } catch (error) {
+        console.log(error);
+        res.json({message:"Error deleting the post!",status:false});
+    }
+}
 module.exports = {
-    userPost, getUserDetails, getUserPosts, userComment, userLike, getAllUserDetails, getAllUserPosts, manageUserFrnds
+    userPost, getUserDetails, getUserPosts, userComment, userLike, getAllUserDetails, getAllUserPosts, manageUserFrnds, deletePost
 };
