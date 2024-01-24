@@ -10,7 +10,7 @@ app.use(cors());
 app.use(express.json());
 
 app.use("/api/authenticate/", authenticationRouting);
-app.use('/api/user', postsRouting);
+app.use('/api/user/', postsRouting);
 
 app.listen(5001, () => {
     console.log("Sasaz server runnning!");
