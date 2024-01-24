@@ -1,4 +1,5 @@
 const userDB = require("../models/userModel");
+const bcrypt = require("bcrypt");
 const userProfileEdit = async (req,res)=>{
     try{
         const {email,changedField,newData} = req.body;
@@ -6,7 +7,7 @@ const userProfileEdit = async (req,res)=>{
         if(userMatch){
             if(changedField==="password")
             {
-                bcrypt.hash(password, 12).then(async (hashPass) => {
+                bcrypt.hash(newData, 12).then(async (hashPass) => {
                     const updatedUser = await userDB.updateOne({email:email},{
                         [changedField] : hashPass
                     })
@@ -24,6 +25,7 @@ const userProfileEdit = async (req,res)=>{
         }
     }
     catch(error){
+        console.log(error);
         res.json({message:"Internal error!",status:false});
     }
 }
