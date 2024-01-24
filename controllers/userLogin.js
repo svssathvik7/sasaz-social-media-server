@@ -15,11 +15,11 @@ const userLogin = async (req, res) => {
                 res.json({ message: "Wrong password!", status: false });
             }
             else {
-                const userData = await userModel.findOne({email:email}).populate(
+                const userData = await userModel.findOne({ email: email }).populate(
                     {
-                        path : "posts",
-                        populate : {
-                            path : "userPosted"
+                        path: "posts",
+                        populate: {
+                            path: "userPosted"
                         }
                     }
                 )
@@ -28,7 +28,7 @@ const userLogin = async (req, res) => {
                     name: userMatch.name,
                     email: email,
                     phNumer: userMatch.phNumer
-                }, "ThisIsSaSazSecret", { expiresIn: "15m" });
+                }, "ThisIsSaSazSecret", { expiresIn: "1hr" });
                 res.json({ message: "Successfull login!", status: true, user: token, userDetails: userData });
             }
         }
