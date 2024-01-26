@@ -16,21 +16,21 @@ const userLogin = async (req, res) => {
             }
             else {
                 const userData = await userModel
-                    .findOne({ email: email })
-                    .populate('posts')
-                    .populate({
-                        path: 'posts',
-                        populate: {
-                            path: 'userPosted',
-                        }
-                    })
-                    .populate('savedPosts')
-                    .populate({
-                        path: 'savedPosts',
-                        populate: {
-                            path: 'userPosted'
-                        }
-                    });
+                .findOne({ email: email })
+                .populate('posts')
+                .populate({
+                    path: 'posts',
+                    populate: {
+                        path: 'userPosted',
+                    }
+                })
+                .populate('savedPosts')
+                .populate({
+                    path : 'savedPosts',
+                    populate : {
+                        path : 'userPosted'
+                    }
+                });                
                 const token = jwt.sign({
                     id: userMatch._id,
                     name: userMatch.name,
