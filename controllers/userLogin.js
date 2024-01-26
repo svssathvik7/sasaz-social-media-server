@@ -23,6 +23,13 @@ const userLogin = async (req, res) => {
                     populate: {
                         path: 'userPosted',
                     }
+                })
+                .populate('savedPosts')
+                .populate({
+                    path : 'savedPosts',
+                    populate : {
+                        path : 'userPosted'
+                    }
                 });                
                 console.log(userData);
                 const token = jwt.sign({
