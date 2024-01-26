@@ -1,24 +1,51 @@
-const chatDb = require("../models/chatModel");
+const {messageDb} = require("../models/chatModel");
+const {chatDb} = require("../models/chatModel");
+const createChatSession = async (chatId)=>{
+    const newChatSession = await new chatDb({
+        id : chatId,
+        chat : []
+    });
+    await newChatSession.save();
+    return newChatSession;
+}
 const fetchMessages = async (req,res)=>{
     try {
-        const messages = await chatDb.find();
-        // console.log("Fetch : ",messages);
-        res.json({message:"Success",status:true,data:messages});
+        const {chatId} = req.body
+        const messages = await chatDb.findOne({id:chatId}).populate("chat");
+        if(messages === null)
+        {
+            const newChatSession = await createChatSession(chatId);
+            res.json({message:"Success",status:true,data:newChatSession});
+        }
+        else{
+            res.json({message:"Success",status:true,data:messages});
+        }
     } catch (error) {
         console.log(error);
         res.json({message:"Something went wrong!",status:false});
     }
 }
 const addMessage = async (req,res)=>{
-    // console.log("Add : ",req.body);
     try {
-        const {user,message} = req.body;
-        const chatMessage = new chatDb({
+        const {user,message,chatId} = req.body;
+        const chatMessage = await new messageDb({
             user,
             message
         });
         await chatMessage.save();
-        res.json({message:"Success",status:true});
+        const chatSession = await chatDb.findOne({id:chatId});
+        if(chatSession === null)
+        {
+            const newChatSession = await createChatSession(chatId);
+            await newChatSession.chat.push(chatMessage);
+            await newChatSession.save();
+            res.json({message:"Success",status:true});
+        }
+        else{
+            await chatSession.chat.push(chatMessage);
+            await chatSession.save();
+            res.json({message:"Success",status:true});
+        }
     } catch (error) {
         console.log(error);
         res.json({message:"Something went wrong!",status:false});
