@@ -31,7 +31,6 @@ const userLogin = async (req, res) => {
                         path : 'userPosted'
                     }
                 });                
-                console.log(userData);
                 const token = jwt.sign({
                     id: userMatch._id,
                     name: userMatch.name,

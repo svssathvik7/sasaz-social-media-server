@@ -11,7 +11,12 @@ const createChatSession = async (chatId)=>{
 const fetchMessages = async (req,res)=>{
     try {
         const {chatId} = req.body
-        const messages = await chatDb.findOne({id:chatId}).populate("chat");
+        const messages = await chatDb.findOne({id:chatId}).populate({
+            path: "chat",
+            populate: {
+              path: "user",
+            },
+        });
         if(messages === null)
         {
             const newChatSession = await createChatSession(chatId);
