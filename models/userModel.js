@@ -28,6 +28,10 @@ const userSchema = new mongoose.Schema({
     posts: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'posts'
+    }],
+    savedPosts : [{
+        type : mongoose.Schema.Types.ObjectId,
+        ref : 'posts'
     }]
 });
 const userModel = new mongoose.model("users", userSchema);

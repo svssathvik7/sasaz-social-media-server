@@ -15,14 +15,32 @@ const userLogin = async (req, res) => {
                 res.json({ message: "Wrong password!", status: false });
             }
             else {
+<<<<<<< HEAD
                 const userData = await userModel.findOne({ email: email }).populate(
                     {
                         path: "posts",
                         populate: {
                             path: "userPosted"
                         }
+=======
+                const userData = await userModel
+                .findOne({ email: email })
+                .populate('posts')
+                .populate({
+                    path: 'posts',
+                    populate: {
+                        path: 'userPosted',
+>>>>>>> a577a5cb899c3a176a8d8fc046591f79b0580027
                     }
-                )
+                })
+                .populate('savedPosts')
+                .populate({
+                    path : 'savedPosts',
+                    populate : {
+                        path : 'userPosted'
+                    }
+                });                
+                console.log(userData);
                 const token = jwt.sign({
                     id: userMatch._id,
                     name: userMatch.name,
