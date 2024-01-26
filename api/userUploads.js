@@ -2,7 +2,7 @@ const express = require("express");
 const Router = express.Router();
 const { userPost, getUserDetails, getUserPosts, userComment, userLike, getAllUserDetails, getAllUserPosts ,manageUserFrnds,deletePost} = require("../controllers/userUploadsController");
 const {exploreFeed} = require("../controllers/postFeed");
-
+const {addSavedPosts} = require("../controllers/userEdits");
 Router.post("/userPost", userPost);
 Router.post('/getUserDetails', getUserDetails);
 Router.post("/comment", userComment);
@@ -13,4 +13,5 @@ Router.post("/getUserPosts", getUserPosts);
 Router.post("/getAllPosts",getAllUserPosts);
 Router.post("/deletePost",deletePost);
 Router.get("/exploreFeed",exploreFeed);
+Router.post("/addSavedPosts",addSavedPosts);
 module.exports = Router;
