@@ -32,8 +32,8 @@ async function userPost(req, res) {
 }
 async function userComment(req, res) {
     try {
-        const { pId, comment, name } = req.body;
-        await postModel.updateOne({ _id: pId }, { $push: { comments: { comment: comment, userCommented: name.trim(), likes: 0, replies: [], usersLiked: [] } } });
+        const { pId, comment, name, dp } = req.body;
+        await postModel.updateOne({ _id: pId }, { $push: { comments: { comment: comment, userCommented: name.trim(), likes: 0, replies: [], usersLiked: [], dp: dp } } });
         const posts = await postModel.findOne({ _id: pId });
         const newComment = posts.comments[posts.comments.length - 1];
         res.json({ message: "Commented on the post", status: true, newComment: newComment });
@@ -46,15 +46,18 @@ async function userComment(req, res) {
 
 async function userReplyToComment(req, res) {
     try {
-        const { pId, cId, reply, email } = req.body;
-        console.log(pId, cId, reply);
-        const updatedPost = await postModel.findOneAndUpdate(
+        const { pId, cId, reply, email, name, dp } = req.body;
+        await postModel.findOneAndUpdate(
             { _id: pId, 'comments._id': cId },
-            { $push: { 'comments.$.replies': { reply: reply, userReplied: email } } },
+            { $push: { 'comments.$.replies': { reply: reply, userReplied: email, name: name, dp: dp } } },
             { new: true }
         );
-        console.log(updatedPost);
-        res.json({ message: "Replied to the comment", status: true });
+        const replyObject = {
+            reply: reply,
+            name: name,
+            dp: dp
+        }
+        res.json({ message: "Replied to the comment", status: true, reply: replyObject });
     }
     catch (err) {
         console.log(err.message);

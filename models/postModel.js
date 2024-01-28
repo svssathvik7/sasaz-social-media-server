@@ -41,13 +41,18 @@ const postSchema = new mongoose.Schema({
             replies: [
                 {
                     reply: String,
-                    userReplied: String
+                    userReplied: String,
+                    name: String,
+                    dp: String
                 }
             ],
             likes: {
                 type: Number
             },
-            usersLiked: [String]
+            usersLiked: [String],
+            dp: {
+                type: String
+            }
         }
     ]
 });
