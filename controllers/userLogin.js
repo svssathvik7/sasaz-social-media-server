@@ -36,7 +36,7 @@ const userLogin = async (req, res) => {
                     name: userMatch.name,
                     email: email,
                     phNumer: userMatch.phNumer
-                }, "ThisIsSaSazSecret", { expiresIn: "15m" });
+                }, "ThisIsSaSazSecret", { expiresIn: "1hr" });
                 res.json({ message: "Successfull login!", status: true, user: token, userDetails: userData });
             }
         }

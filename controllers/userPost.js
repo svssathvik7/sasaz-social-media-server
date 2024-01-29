@@ -18,7 +18,6 @@ async function getUserPosts(req, res) {
                 }
             }
         );
-        console.log(userMatch);
         if (userMatch) {
             res.json({ message: "Success", posts: userMatch.posts });
         }

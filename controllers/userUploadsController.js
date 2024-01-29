@@ -32,10 +32,32 @@ async function userPost(req, res) {
 }
 async function userComment(req, res) {
     try {
-        const { pId, comment, name } = req.body;
-        console.log(name);
-        await postModel.updateOne({ _id: pId }, { $push: { comments: { comment: comment, userCommented: name } } });
-        res.json({ message: "Commented on the post", status: true, userName: name });
+        const { pId, comment, name, dp } = req.body;
+        await postModel.updateOne({ _id: pId }, { $push: { comments: { comment: comment, userCommented: name.trim(), likes: 0, replies: [], usersLiked: [], dp: dp } } });
+        const posts = await postModel.findOne({ _id: pId });
+        const newComment = posts.comments[posts.comments.length - 1];
+        res.json({ message: "Commented on the post", status: true, newComment: newComment });
+    }
+    catch (err) {
+        console.log(err.message);
+        res.json({ message: "There is some issue! Please Try Again...", status: false });
+    }
+}
+
+async function userReplyToComment(req, res) {
+    try {
+        const { pId, cId, reply, email, name, dp } = req.body;
+        await postModel.findOneAndUpdate(
+            { _id: pId, 'comments._id': cId },
+            { $push: { 'comments.$.replies': { reply: reply, userReplied: email, name: name, dp: dp } } },
+            { new: true }
+        );
+        const replyObject = {
+            reply: reply,
+            name: name,
+            dp: dp
+        }
+        res.json({ message: "Replied to the comment", status: true, reply: replyObject });
     }
     catch (err) {
         console.log(err.message);
@@ -45,17 +67,36 @@ async function userComment(req, res) {
 
 async function userLike(req, res) {
     try {
-        const { pId, email } = req.body;
-        const post = await postModel.findOne({ _id: pId, 'usersLiked': email });
-        const filter = { _id: pId };
-        const update = !post ? { $inc: { likes: 1 }, $push: { usersLiked: email } } : { $inc: { likes: -1 }, $pull: { usersLiked: email } };
+        const { pId, email, cId, comment } = req.body;
         const options = { new: true };
-        const updatedPost = await postModel.findOneAndUpdate(filter, update, options);
-        if (!post) {
-            res.json({ message: "Liked the Post", status: true, likes: updatedPost.likes });
+        if (pId && cId) {
+            const postCommentLikes = await postModel.findOne({ _id: pId });
+            const verify = postCommentLikes.comments.find((ele) => ele.id === cId).usersLiked.find((users) => users === email);
+            const update = !verify ? { $inc: { 'comments.$.likes': 1 }, $push: { 'comments.$.usersLiked': email } } : { $inc: { 'comments.$.likes': -1 }, $pull: { 'comments.$.usersLiked': email } };
+            const filter = { _id: pId, 'comments._id': cId };
+            const updatedPost = await postModel.findOneAndUpdate(filter, update, options);
+            const commentLikes = updatedPost.comments.find((ele) => ele.id === cId);
+            if (!verify) {
+                res.json({ message: "Liked the Comment", status: true, likedComment: commentLikes });
+            }
+            else {
+                res.json({ message: "DisLiked the Comment", status: false, likedComment: commentLikes });
+            }
+        }
+        else if (!comment) {
+            const post = await postModel.findOne({ _id: pId, 'usersLiked': email });
+            const filter = { _id: pId };
+            const update = !post ? { $inc: { likes: 1 }, $push: { usersLiked: email } } : { $inc: { likes: -1 }, $pull: { usersLiked: email } };
+            const updatedPost = await postModel.findOneAndUpdate(filter, update, options);
+            if (!post) {
+                res.json({ message: "Liked the Post", status: true, likes: updatedPost.likes });
+            }
+            else {
+                res.json({ message: "DisLiked the Post", status: false, likes: updatedPost.likes });
+            }
         }
         else {
-            res.json({ message: "Already Liked the Post", status: false, likes: updatedPost.likes });
+            res.json({ message: "There is some error Please Try after some time", status: false });
         }
     }
     catch (err) {
@@ -124,25 +165,25 @@ async function manageUserFrnds(req, res) {
         console.log(err);
     }
 }
-const deletePost = async (req,res)=>{
+const deletePost = async (req, res) => {
     try {
-        const {postId} = req.body;
-        const postMatch = await postModel.findOne({_id:postId});
-        if(postMatch){
-            const userPosted = await userModel.findOne({_id:postMatch.userPosted});
-            await postModel.deleteOne({_id:postMatch._id});
+        const { postId } = req.body;
+        const postMatch = await postModel.findOne({ _id: postId });
+        if (postMatch) {
+            const userPosted = await userModel.findOne({ _id: postMatch.userPosted });
+            await postModel.deleteOne({ _id: postMatch._id });
             await userPosted.posts.pull(postMatch);
             await userPosted.save();
-            res.json({message:"Success",status:true})
+            res.json({ message: "Success", status: true })
         }
-        else{
-            res.json({message:"Error deleting the post!",status:false});
+        else {
+            res.json({ message: "Error deleting the post!", status: false });
         }
     } catch (error) {
         console.log(error);
-        res.json({message:"Error deleting the post!",status:false});
+        res.json({ message: "Error deleting the post!", status: false });
     }
 }
 module.exports = {
-    userPost, getUserDetails, getUserPosts, userComment, userLike, getAllUserDetails, getAllUserPosts, manageUserFrnds, deletePost
+    userPost, getUserDetails, getUserPosts, userComment, userLike, getAllUserDetails, getAllUserPosts, manageUserFrnds, deletePost, userReplyToComment
 };
