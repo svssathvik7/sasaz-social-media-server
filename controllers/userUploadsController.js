@@ -81,7 +81,6 @@ async function getUserDetails(req, res) {
             path : "userPosted"
         }
     });
-    console.log(userDetails);
     res.json({ message: "User Details Fetched", userDetails: userDetails });
 }
 
