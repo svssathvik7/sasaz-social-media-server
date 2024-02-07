@@ -116,7 +116,12 @@ async function getAllUserDetails(req, res) {
 async function getUserDetails(req, res) {
     const { token } = req.body;
     const decodedToken = jwt.decode(token, "ThisIsSaSazSecret");
-    const userDetails = await userModel.findOne({ email: decodedToken.email }).populate("posts").populate("friends");
+    const userDetails = await userModel.findOne({ email: decodedToken.email }).populate("posts savedPosts").populate("friends").populate({
+        path : 'savedPosts',
+        populate : {
+            path : "userPosted"
+        }
+    });
     res.json({ message: "User Details Fetched", userDetails: userDetails });
 }
 
