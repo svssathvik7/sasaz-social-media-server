@@ -1,5 +1,6 @@
 const { messageDb } = require("../models/chatModel");
 const { chatDb } = require("../models/chatModel");
+
 const createChatSession = async (chatId) => {
     const newChatSession = await new chatDb({
         id: chatId,
@@ -10,16 +11,20 @@ const createChatSession = async (chatId) => {
 }
 const fetchMessages = async (req, res) => {
     try {
-        const { chatId } = req.body
-        const messages = await chatDb.findOne({ id: chatId }).populate({
+        const { chatId } = req.body;
+        const messages = await chatDb.findOne({ chatId: chatId }).populate({
             path: "chat",
             populate: {
                 path: "user",
             },
         });
         if (messages === null) {
-            const newChatSession = await createChatSession(chatId);
-            res.json({ message: "Success", status: true, data: newChatSession });
+            const newChatSession = new chatDb({
+                chatId: chatId,
+                chat: []
+            });
+            await newChatSession.save();
+            res.json({ message: "New Chat Created", status: false, data: [] })
         }
         else {
             res.json({ message: "Success", status: true, data: messages });
@@ -56,7 +61,7 @@ const addMessage = async (req, res) => {
 }
 async function reactMessage(req, res) {
     const { emoji, mId, chatId } = req.body;
-    const chat = await chatDb.findOne({ id: chatId }).populate('chat');
+    const chat = await chatDb.findOne({ chatId: chatId }).populate('chat');
     if (chat && chat.chat && chat.chat.length > mId) {
         const messageId = chat.chat[mId]._id
         await messageDb.findOneAndUpdate({ _id: messageId }, { $set: { reply: emoji } }, { new: true });

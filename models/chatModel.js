@@ -17,7 +17,7 @@ const messageSchema = new mongoose.Schema({
 });
 
 const chatSchema = new mongoose.Schema({
-    id: {
+    chatId: {
         type: String,
         required: true
     },
