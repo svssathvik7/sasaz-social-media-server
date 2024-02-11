@@ -19,11 +19,13 @@ const appServer = app.listen(5001, () => {
     console.log("Sasaz server runnning!");
 });
 
+//Creating a new socket io server, and passing our node js server as param.
 const io = new Server(appServer, {
-    cors: 'http://localhost:3000',
+    cors: 'http://localhost:3000',//To be changed in production 
     methods: ["Get", "Post", "Delete"]
 });
 
+//Function used to add new sent message from specific user.
 const addMessage = async (data) => {
     const { userId, message, roomChat } = data;
     const newMessage = new messageDb({
@@ -35,10 +37,13 @@ const addMessage = async (data) => {
     await chatDb.updateOne({ chatId: roomChat }, { $push: { chat: newMessage } });
     return savedMessage;
 }
+//Making the socket io server to connect once the user make a connection event.
 io.on("connection", (socket) => {
+    //used to connect two users with specific id.
     socket.on('join_chat_room', (data) => {
         socket.join(data.roomChat);
     })
+    //Function to handle new messages and emit them to the sender and the person with unique chat id.
     socket.on("send_message", async (data) => {
         const messageObject = await addMessage(data);
         socket.emit('receive_message', { data, messageObject });
